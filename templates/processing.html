@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Video</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0f2027;
+            background-image: linear-gradient(315deg, #0f2027 0%, #203a43 74%, #2c5364 100%);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        #video-container {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            height: auto;
+        }
+
+        #video-frame {
+            width: 100%;
+            height: 100%;
+            border: 4px solid #fff;
+            border-radius: 10px;
+        }
+
+        button {
+            padding: 12px 24px;
+            background-color: #ff5252;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ff1744;
+        }
+
+        #cancel-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        #cancel-button {
+            background-color: #ff5252;
+            padding: 8px 16px;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #cancel-button:hover {
+            background-color: #ff1744;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            button {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Processing Video...</h1>
+    
+    <div id="video-container">
+        <!-- The video stream will be displayed here -->
+        <img id="video-frame" src="{{ url_for('video_feed', video_name=video_name) }}" alt="Processing video feed">
+        
+    </div>
+    <div id="cancel-container">
+        <button id="cancel-button">Cancel Processing</button>
+    </div>
+    <script>
+        document.getElementById('cancel-button').addEventListener('click', function() {
+            fetch('/cancel_processing', { method: 'POST' })
+                .then(() => {
+                    alert('Video processing has been cancelled.');
+                    window.location.href = '/';
+                });
+        });
+    </script>
+
+</body>
+</html>

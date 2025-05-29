@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shark Detection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        input[type="email"],
+        input[type="file"] {
+            margin: 15px 0;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 1rem;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        input[type="file"]::file-selector-button {
+            background: #00b4db;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            background: #0083b0;
+        }
+
+        button {
+            padding: 12px 20px;
+            background-color: #00b4db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0083b0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 500px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+    <script>
+        // Function to validate email format
+        function isValidEmail(email) {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailPattern.test(email);
+        }
+
+        // Function to show the "View Videos" button when a valid email is entered
+        function checkEmail() {
+            const emailInput = document.querySelector('input[name="email"]');
+            const videoButton = document.getElementById('view-videos-btn');
+            const email = emailInput.value;
+
+            if (isValidEmail(email)) {
+                localStorage.setItem('userEmail', email); // Save email in localStorage
+                videoButton.classList.remove('hidden');
+            } else {
+                localStorage.removeItem('userEmail'); // Remove email if it's invalid
+                videoButton.classList.add('hidden');
+            }
+        }
+
+        // Function to check if a valid email exists in localStorage on page load
+        function checkStoredEmail() {
+            const storedEmail = localStorage.getItem('userEmail');
+            const emailInput = document.querySelector('input[name="email"]');
+            const videoButton = document.getElementById('view-videos-btn');
+
+            if (storedEmail && isValidEmail(storedEmail)) {
+                emailInput.value = storedEmail; // Pre-fill email input
+                videoButton.classList.remove('hidden'); // Show the button
+            } else {
+                videoButton.classList.add('hidden'); // Hide the button
+            }
+        }
+
+        // Call checkStoredEmail when the page loads
+        window.onload = checkStoredEmail;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload a Video for Shark Detection </h1>
+        <form action="{{ url_for('process_video') }}" method="POST" enctype="multipart/form-data">
+            <input type="email" name="email" placeholder="Enter your email" required oninput="checkEmail()">
+            <input type="file" name="video" accept="video/*" required>
+            <button type="submit">Submit</button>
+
+            <button id="view-videos-btn" class="hidden" type="button" onclick="window.location.href='/videos/' + document.querySelector('input[name=email]').value;">
+                Previous Processed Videos
+            </button>
+        </form>
+    </div>
+</body>
+</html>
